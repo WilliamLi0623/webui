@@ -110,20 +110,6 @@ export class UserListComponent implements OnInit {
 
   createDataSource(users: User[] = []): void {
     this.dataSource = new MatTableDataSource(users);
-    // this.dataSource.sortingDataAccessor = (item, property) => {
-    //   switch (property) {
-    //     case 'snapshot_name':
-    //       return item.snapshot_name;
-    //     case 'dataset':
-    //       return item.dataset;
-    //     case 'used':
-    //       return item.properties ? item.properties.used.parsed.toString() : '';
-    //     case 'created':
-    //       return item.properties ? item.properties.creation.parsed.$date.toString() : '';
-    //     case 'referenced':
-    //       return item.properties ? item.properties.referenced.parsed.toString() : '';
-    //   }
-    // };
     setTimeout(() => {
       // TODO: Figure out how to avoid setTimeout to make it work on first loading
       if (this.filterString) {

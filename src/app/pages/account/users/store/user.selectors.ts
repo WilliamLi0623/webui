@@ -19,8 +19,3 @@ export const selectUsersTotal = createSelector(
   selectUserState,
   selectTotal,
 );
-
-export const selectBuiltinUsers = createSelector(
-  selectUsers,
-  (users) => users.filter((user) => user.builtin && user.username !== 'root'),
-);

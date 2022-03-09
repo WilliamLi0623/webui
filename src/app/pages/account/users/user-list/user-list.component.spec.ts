@@ -1,7 +1,8 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { provideMockStore } from '@ngrx/store/testing';
+import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { MockComponent } from 'ng-mocks';
 import { of, Subject } from 'rxjs';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
@@ -10,6 +11,8 @@ import { User } from 'app/interfaces/user.interface';
 import { EntityModule } from 'app/modules/entity/entity.module';
 import { IxTableModule } from 'app/modules/ix-tables/ix-table.module';
 import { IxTableHarness } from 'app/modules/ix-tables/testing/ix-table.harness';
+import { usersInitialState, UsersState } from 'app/pages/account/users/store/user.reducer';
+import { selectUsers, selectUserState, selectUsersTotal } from 'app/pages/account/users/store/user.selectors';
 import { DialogService, ModalService, WebSocketService } from 'app/services';
 import { selectPreferences } from 'app/store/preferences/preferences.selectors';
 import { CoreService } from '../../../../services/core-service/core.service';
@@ -69,6 +72,7 @@ describe('UserListComponent', () => {
   let spectator: Spectator<UserListComponent>;
   let loader: HarnessLoader;
   let ws: WebSocketService;
+  let store$: MockStore<UsersState>;
 
   const createComponent = createComponentFactory({
     component: UserListComponent,
@@ -95,6 +99,18 @@ describe('UserListComponent', () => {
       provideMockStore({
         selectors: [
           {
+            selector: selectUserState,
+            value: usersInitialState,
+          },
+          {
+            selector: selectUsers,
+            value: [],
+          },
+          {
+            selector: selectUsersTotal,
+            value: 0,
+          },
+          {
             selector: selectPreferences,
             value: {
               hideBuiltinUsers: false,
@@ -110,6 +126,7 @@ describe('UserListComponent', () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     ws = spectator.inject(WebSocketService);
+    store$ = spectator.inject(MockStore);
   });
 
   it('should show table rows', async () => {
@@ -127,9 +144,8 @@ describe('UserListComponent', () => {
   });
 
   it('should have empty message when loaded and datasource is empty', async () => {
-    spectator.fixture.componentInstance.loading = false;
-    spectator.fixture.componentInstance.error = false;
-    spectator.fixture.componentInstance.createDataSource();
+    store$.overrideSelector(selectUsers, []);
+    store$.refreshState();
 
     const table = await loader.getHarness(IxTableHarness);
     const text = await table.getCellTextByIndex();
@@ -138,9 +154,13 @@ describe('UserListComponent', () => {
   });
 
   it('should have error message when can not retrieve response', async () => {
-    spectator.fixture.componentInstance.loading = false;
-    spectator.fixture.componentInstance.error = true;
-    spectator.fixture.componentInstance.createDataSource();
+    store$.overrideSelector(selectUserState, {
+      error: 'Users could not be loaded',
+    } as UsersState);
+    store$.refreshState();
+    store$.select(selectUsers).subscribe((snapshots) => {
+      expect(snapshots).toEqual([]);
+    });
 
     const table = await loader.getHarness(IxTableHarness);
     const text = await table.getCellTextByIndex();
@@ -161,14 +181,8 @@ describe('UserListComponent', () => {
   });
 
   it('should expand only one row on click', async () => {
-    const table = await loader.getHarness(IxTableHarness);
-    const [firstRow, secondRow] = await table.getRows();
-
-    const firstRowElement = await firstRow.host();
-    await firstRowElement.click();
-
-    const secondRowElement = await secondRow.host();
-    await secondRowElement.click();
+    const expandButton = await loader.getHarness(MatButtonHarness.with({ selector: 'expand_more' }));
+    await expandButton.click();
 
     expect(spectator.queryAll('.expanded').length).toEqual(1);
   });

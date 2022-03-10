@@ -1,8 +1,7 @@
 :host {
-  display: block;
+  color: var(--fg1);
+  display: flex;
   font-size: 12px;
-
-
   margin-bottom: 19px;
   margin-top: 12px;
 
@@ -10,7 +9,12 @@
     margin-left: 0;
   }
 
-  tooltip {
-    vertical-align: -4px;
+  ::ng-deep tooltip {
+    display: inline-flex;
+    margin: 0 0 0 8px;
+
+    .tooltip {
+      display: inline-flex;
+    }
   }
 }

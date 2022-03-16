@@ -31,6 +31,7 @@ import { IxInputComponent } from 'app/modules/ix-forms/components/ix-input/ix-in
 import {
   IxIpInputWithNetmaskComponent,
 } from 'app/modules/ix-forms/components/ix-ip-input-with-netmask/ix-ip-input-with-netmask.component';
+import { IxPermissionsComponent } from 'app/modules/ix-forms/components/ix-permissions/ix-permissions.component';
 import { IxRadioGroupComponent } from 'app/modules/ix-forms/components/ix-radio-group/ix-radio-group.component';
 import { IxSelectComponent } from 'app/modules/ix-forms/components/ix-select/ix-select.component';
 import { IxModalHeaderComponent } from 'app/modules/ix-forms/components/ix-slide-in/components/ix-modal-header/ix-modal-header.component';
@@ -77,6 +78,7 @@ import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
     IxCheckboxComponent,
     IxTextareaComponent,
     IxComboboxComponent,
+    IxPermissionsComponent,
     IxChipsComponent,
     IxExplorerComponent,
     IxFileInputComponent,
@@ -92,6 +94,7 @@ import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
     IxModalHeaderComponent,
     IxFieldsetComponent,
     IxCheckboxComponent,
+    IxPermissionsComponent,
     IxTextareaComponent,
     IxChipsComponent,
     IxComboboxComponent,
